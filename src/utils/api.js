@@ -1,7 +1,5 @@
 import { supabase } from '../supabaseClient'
 
-// ✅ FIX: Hapus API_BASE_URL karena tidak dipakai
-
 const api = {
   // ✅ READ
   get: async (endpoint, options = {}) => {
@@ -202,7 +200,8 @@ export const uploadImageToStorage = async (file, folder) => {
   
   console.log('📁 Uploading to path:', filePath);
   
-  const { data, error } = await supabase
+  // ✅ FIX: Hapus 'data' karena tidak dipakai
+  const { error } = await supabase
     .storage
     .from('images')
     .upload(filePath, file, {
@@ -239,7 +238,6 @@ export const deleteImageFromStorage = async (imageUrl) => {
     
     if (path) {
       console.log('📁 Deleting path from Storage:', path);
-      // ✅ FIX: Hapus 'data' karena tidak dipakai
       const { error } = await supabase.storage.from('images').remove([path])
       
       if (error) {

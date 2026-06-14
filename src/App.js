@@ -142,7 +142,6 @@ function MainApp({ currentUser, onLogout, isDarkMode, setIsDarkMode }) {
   const [selectedGalleryImage, setSelectedGalleryImage] = useState(null);
   
   // Search & Filters
-  const [globalSearch, setGlobalSearch] = useState('');
   const [newsCategory, setNewsCategory] = useState('all');
   
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
