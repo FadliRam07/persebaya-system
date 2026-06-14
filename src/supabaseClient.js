@@ -1,4 +1,3 @@
-// frontend/src/supabaseClient.js
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL
@@ -29,7 +28,8 @@ export const uploadImage = async (file, folder) => {
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
   const filePath = `${folder}/${fileName}`
   
-  const { data, error } = await supabase
+  // ✅ FIX: Hapus 'data' karena tidak dipakai
+  const { error } = await supabase
     .storage
     .from('images')
     .upload(filePath, file, {
@@ -55,7 +55,7 @@ export const uploadImage = async (file, folder) => {
 export const deleteImage = async (imageUrl) => {
   if (!imageUrl) return
   
-  // Extract path dari URL: https://.../images/players/xxx.jpg → players/xxx.jpg
+  // Extract path dari URL
   try {
     const url = new URL(imageUrl)
     const path = url.pathname.split('/images/')[1]

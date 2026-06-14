@@ -1,7 +1,6 @@
-// frontend/src/utils/api.js
 import { supabase } from '../supabaseClient'
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000'
+// ✅ FIX: Hapus API_BASE_URL karena tidak dipakai
 
 const api = {
   // ✅ READ
@@ -93,7 +92,7 @@ const api = {
     return { data: data[0] }
   },
   
-  // ✅ UPDATE - FIXED: Only add updated_at for tables that have it
+  // ✅ UPDATE
   put: async (endpoint, payload, options = {}) => {
     console.log('📥 api.put called with endpoint:', endpoint);
     
@@ -109,12 +108,10 @@ const api = {
     
     console.log('📊 Table name:', table, 'ID:', id);
     
-    // ✅ Tabel yang PUNYA kolom updated_at
     const tablesWithUpdatedAt = ['players', 'schedules', 'news', 'events', 'history'];
     
     let finalPayload = { ...payload };
     
-    // ✅ Hanya tambah updated_at jika tabel mendukung
     if (tablesWithUpdatedAt.includes(table)) {
       finalPayload.updated_at = new Date().toISOString();
     }
@@ -242,6 +239,7 @@ export const deleteImageFromStorage = async (imageUrl) => {
     
     if (path) {
       console.log('📁 Deleting path from Storage:', path);
+      // ✅ FIX: Hapus 'data' karena tidak dipakai
       const { error } = await supabase.storage.from('images').remove([path])
       
       if (error) {

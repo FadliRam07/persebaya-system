@@ -1,4 +1,3 @@
-// frontend/src/components/AIChatBot.jsx
 import React, { useState, useRef, useEffect } from 'react';
 
 // ==========================================
@@ -327,7 +326,8 @@ const generateResponse = (userInput) => {
   let bestMatch = null;
   let bestScore = 0;
   
-  for (const [category, items] of Object.entries(KNOWLEDGE_BASE.persebaya)) {
+  // ✅ FIX: Ganti [category, items] jadi [, items] karena category tidak dipakai
+  for (const [, items] of Object.entries(KNOWLEDGE_BASE.persebaya)) {
     let score = 0;
     
     for (const keyword of items.keywords) {
@@ -511,7 +511,6 @@ export default function AIChatBot({ isDarkMode }) {
           {/* Chat Container - FLEX COL LAYOUT */}
           <div className={`
             fixed z-50 
-            /* Mobile: Full screen */
             inset-0 md:inset-auto
             md:bottom-20 md:right-4 lg:bottom-24 lg:right-6
             md:w-80 lg:w-[28rem]
@@ -523,7 +522,7 @@ export default function AIChatBot({ isDarkMode }) {
             ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}
           `}>
             
-            {/* Header - FIXED TOP DENGAN TOMBOL X */}
+            {/* Header */}
             <div className="flex-shrink-0 bg-persebaya-green bg-gradient-to-r from-persebaya-green to-persebaya-dark text-white p-3 sm:p-4 shadow-md">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
@@ -540,7 +539,6 @@ export default function AIChatBot({ isDarkMode }) {
                   </div>
                 </div>
                 
-                {/* ✅ TOMBOL X UNTUK CLOSE - Mobile & Desktop */}
                 <button 
                   onClick={() => setIsOpen(false)}
                   className="p-1.5 sm:p-2 hover:bg-white/20 rounded-full transition ml-2"
@@ -555,7 +553,7 @@ export default function AIChatBot({ isDarkMode }) {
               </div>
             </div>
 
-            {/* Quick Questions - FIXED */}
+            {/* Quick Questions */}
             <div className={`flex-shrink-0 p-2 sm:p-3 border-b ${isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-100 bg-white'}`}>
               <p className={`text-[10px] sm:text-xs mb-1.5 sm:mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>💡 Pertanyaan cepat:</p>
               <div className="flex flex-wrap gap-1 sm:gap-1.5">
@@ -592,7 +590,7 @@ export default function AIChatBot({ isDarkMode }) {
               </div>
             </div>
 
-            {/* Messages - FLEX GROW & SCROLL */}
+            {/* Messages */}
             <div 
               className={`flex-1 overflow-y-auto p-3 sm:p-4 space-y-2 sm:space-y-3 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}
             >
@@ -622,14 +620,13 @@ export default function AIChatBot({ isDarkMode }) {
                 </div>
               ))}
               
-              {/* Typing Indicator */}
               {isTyping && (
                 <div className="flex justify-start">
                   <div className={`px-2.5 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-2xl rounded-bl-md ${isDarkMode ? 'bg-gray-700' : 'bg-white shadow-sm'}`}>
                     <div className="flex gap-1.5">
-                      <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-bounce ${isDarkMode ? 'bg-gray-400' : 'bg-gray-400'}`} style={{ animationDelay: '0ms' }}></span>
-                      <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-bounce ${isDarkMode ? 'bg-gray-400' : 'bg-gray-400'}`} style={{ animationDelay: '150ms' }}></span>
-                      <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-bounce ${isDarkMode ? 'bg-gray-400' : 'bg-gray-400'}`} style={{ animationDelay: '300ms' }}></span>
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-bounce bg-gray-400" style={{ animationDelay: '0ms' }}></span>
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-bounce bg-gray-400" style={{ animationDelay: '150ms' }}></span>
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-bounce bg-gray-400" style={{ animationDelay: '300ms' }}></span>
                     </div>
                   </div>
                 </div>
@@ -638,7 +635,7 @@ export default function AIChatBot({ isDarkMode }) {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input - FIXED BOTTOM */}
+            {/* Input */}
             <div className={`flex-shrink-0 p-2 sm:p-3 border-t ${isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-100 bg-white'}`}>
               <div className="flex gap-1.5 sm:gap-2">
                 <input

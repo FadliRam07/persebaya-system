@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import api from './utils/api';
 
@@ -143,11 +143,8 @@ function MainApp({ currentUser, onLogout, isDarkMode, setIsDarkMode }) {
   
   // Search & Filters
   const [globalSearch, setGlobalSearch] = useState('');
-  const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const [newsCategory, setNewsCategory] = useState('all');
   
-  const searchRef = useRef(null);
-  const searchTimeoutRef = useRef(null);
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   // ==========================================
@@ -184,29 +181,6 @@ function MainApp({ currentUser, onLogout, isDarkMode, setIsDarkMode }) {
   };
   const fetchNews = async () => { try { const { data } = await api.get('/news', { params: { order: 'created_at:desc' } }); setNewsList(data || []); } catch (err) { setNewsList([]); } };
   const fetchEvents = async () => { try { const { data } = await api.get('/events', { params: { order: 'date:asc' } }); setEventsList(data || []); } catch (err) { setEventsList([]); } };
-
-  // ==========================================
-  // 🔍 SEARCH & NAVIGATION
-  // ==========================================
-  const handleSearchFocus = () => { if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current); setShowGlobalSearch(true); };
-  const handleSearchBlur = () => { searchTimeoutRef.current = setTimeout(() => setShowGlobalSearch(false), 200); };
-  
-  const globalSearchResults = () => {
-    if (!globalSearch.trim()) return [];
-    const q = globalSearch.toLowerCase();
-    return [
-      ...(newsList || []).filter(n => n.title?.toLowerCase().includes(q) || n.excerpt?.toLowerCase().includes(q)).map(n => ({ type: 'news', ...n })),
-      ...(eventsList || []).filter(e => e.title?.toLowerCase().includes(q) || e.description?.toLowerCase().includes(q)).map(e => ({ type: 'event', ...e })),
-      ...(players || []).filter(p => p.name?.toLowerCase().includes(q) || p.position?.toLowerCase().includes(q)).map(p => ({ type: 'player', ...p }))
-    ];
-  };
-
-  const handleSearchItemClick = (result) => {
-    if (result.type === 'news') { setSelectedNews(result); setDetailPage('news'); }
-    else if (result.type === 'event') { setSelectedEvent(result); setDetailPage('event'); }
-    else if (result.type === 'player') { setSelectedPlayer(result); setDetailPage('player'); }
-    setGlobalSearch(''); setShowGlobalSearch(false);
-  };
 
   const goToPlayerDetail = (p) => { setSelectedPlayer(p); setDetailPage('player'); window.scrollTo(0,0); };
   const goToNewsDetail = (n) => { setSelectedNews(n); setDetailPage('news'); window.scrollTo(0,0); };
@@ -469,9 +443,8 @@ function MainApp({ currentUser, onLogout, isDarkMode, setIsDarkMode }) {
               </div>
             </div>
 
-            {/* ✅ AI CHATBOT PROMO - Small Sidebar Version */}
+            {/* AI CHATBOT PROMO - Small Sidebar Version */}
             <div className={`${isDarkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700' : 'bg-gradient-to-br from-persebaya-green to-emerald-700'} rounded-lg shadow-lg p-4 sm:p-5 text-white border`}>
-              {/* Icon */}
               <div className="flex justify-center mb-3">
                 <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
                   <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -480,7 +453,6 @@ function MainApp({ currentUser, onLogout, isDarkMode, setIsDarkMode }) {
                 </div>
               </div>
               
-              {/* Content */}
               <div className="text-center mb-3">
                 <h3 className="text-base sm:text-lg font-bold mb-1">AI ChatBot</h3>
                 <p className="text-white/90 text-xs sm:text-sm leading-relaxed">
@@ -488,7 +460,6 @@ function MainApp({ currentUser, onLogout, isDarkMode, setIsDarkMode }) {
                 </p>
               </div>
               
-              {/* Features */}
               <div className="space-y-1.5 mb-3">
                 <div className="flex items-center gap-1.5 text-xs sm:text-sm">
                   <svg className="w-4 h-4 text-green-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -504,37 +475,33 @@ function MainApp({ currentUser, onLogout, isDarkMode, setIsDarkMode }) {
                 </div>
               </div>
               
-              {/* CTA Button - Direct Chat Open */}
-<button 
-  onClick={() => {
-    // Find and click chatbot toggle
-    const chatbotToggle = document.querySelector('[data-chatbot-toggle]');
-    if (chatbotToggle) {
-      chatbotToggle.click();
-    } else {
-      // Try alternative selectors
-      const buttons = document.querySelectorAll('button');
-      buttons.forEach(btn => {
-        if (btn.textContent.toLowerCase().includes('chat') || 
-            btn.className.includes('chatbot') ||
-            btn.title?.toLowerCase().includes('chat')) {
-          btn.click();
-        }
-      });
-    }
-    
-    // Scroll to bottom where chatbot is
-    setTimeout(() => {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }, 100);
-  }}
-  className="w-full bg-white text-persebaya-green py-2 rounded-lg font-bold text-xs sm:text-sm hover:bg-gray-100 transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
->
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-  </svg>
-  Chat Sekarang
-</button>
+              <button 
+                onClick={() => {
+                  const chatbotToggle = document.querySelector('[data-chatbot-toggle]');
+                  if (chatbotToggle) {
+                    chatbotToggle.click();
+                  } else {
+                    const buttons = document.querySelectorAll('button');
+                    buttons.forEach(btn => {
+                      if (btn.textContent.toLowerCase().includes('chat') || 
+                          btn.className.includes('chatbot') ||
+                          btn.title?.toLowerCase().includes('chat')) {
+                        btn.click();
+                      }
+                    });
+                  }
+                  
+                  setTimeout(() => {
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                  }, 100);
+                }}
+                className="w-full bg-white text-persebaya-green py-2 rounded-lg font-bold text-xs sm:text-sm hover:bg-gray-100 transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Chat Sekarang
+              </button>
             </div>
           </aside>
 
